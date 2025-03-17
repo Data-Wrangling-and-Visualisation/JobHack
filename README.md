@@ -12,5 +12,6 @@ JobHack is a project designed to help you understand the job market better by pr
 
 ## Tools Used
 - **Ollama** with **LLaMA 3.2 (1B)**
-- **BeautifulSoup** for web scraping
+- **Scrapy** for crawling websites like linked in (indeed and glassdoor possibly in next weeks)
+- **BeautifulSoup** for web scraping the descriptions
 - **LinkedIn**, **Headhunter**, **Indeed**, and other job websites
