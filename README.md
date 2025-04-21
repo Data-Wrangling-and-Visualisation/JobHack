@@ -43,4 +43,10 @@ JobHack is a powerful toolkit for scraping, analyzing, and visualizing job marke
 ```bash
 git clone https://github.com/Data-Wrangling-and-Visualisation/JobHack.git
 cd JobHack
+```
+### Run the webservice:
+
+```bash
+cd flask_app
+python app.py
 
