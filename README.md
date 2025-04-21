@@ -47,6 +47,7 @@ cd JobHack
 ### Run the webservice:
 
 ```bash
-cd flask_app
+cd my_flask_app
 python app.py
-
+```
+Then you can open your browser and check different visuals
