@@ -35,8 +35,8 @@ JobHack is a powerful toolkit for scraping, analyzing, and visualizing job marke
 - Matplotlib, Plotly    # Visualization
 - Ollama (LLaMA 3.2)    # NLP augmentation
 - Jupyter Notebooks     # Analysis
-
-# 🚀 Quick Start
+```
+## 🚀 Quick Start
 
 ### Clone the repo:
 
