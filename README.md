@@ -9,7 +9,7 @@ JobHack is a powerful toolkit for scraping, analyzing, and visualizing job marke
 ## 🔥 Key Features
 
 ### 🕷️ Web Scrapers
-- **LinkedIn Scraper** (Partial implementation - awaiting whitelist approval)
+- **LinkedIn Scraper** (scrapy spider working fully)
 - **Headhunter Integration** (2,000+ jobs collected)
 - **Coming Soon**: Indeed & Glassdoor support
 
