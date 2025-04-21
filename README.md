@@ -51,3 +51,10 @@ cd my_flask_app
 python app.py
 ```
 Then you can open your browser and check different visuals
+
+
+![Alt text](/1.jpg)
+
+![Alt text](/2.jpg)
+
+![Alt text](/3.jpg)
