@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Demand Bubble Map</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .filters {
+      margin-bottom: 20px;
+    }
+    .filters button {
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .filter-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+      transform: translateX(-250px);
+      transition: transform 0.3s ease;
+      padding: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .filter-drawer.open {
+      transform: translateX(0);
+    }
+    .drawer-content {
+      margin-bottom: 20px;
+    }
+    svg#map {
+      display: block;
+      margin: 0 auto;
+      background: #e0f7fa;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .legend-item {
+      margin: 0 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      margin-right: 5px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Job Demand by City</h1>
+
+  <div class="filters">
+    <button id="toggle-filters">Show Filters</button>
+    <button id="clear-filters">Clear Filters</button>
+  </div>
+
+  <div class="filter-drawer" id="filter-drawer">
+    <div class="drawer-content">
+      <label for="date-filter">Date:</label>
+      <input type="date" id="date-filter" />
+    </div>
+
+    <div class="drawer-content">
+      <label for="keyword-filter">Search keyword:</label>
+      <input type="text" id="keyword-filter" placeholder="Search keyword..." />
+    </div>
+
+    <div class="drawer-content">
+      <label for="min-count-filter">Min jobs per location:</label>
+      <input type="number" id="min-count-filter" placeholder="Min jobs per location" min="1" />
+    </div>
+
+    <div class="drawer-content" id="location-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+  </div>
+
+  <svg id="map" width="960" height="600"></svg>
+
+  <!-- index.js will handle loading the map, drawing bubbles, and filters -->
+  <script src="{{ url_for('static', filename='map.js') }}"></script>
+</body>
+</html>

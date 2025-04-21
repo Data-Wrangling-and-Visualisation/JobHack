@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Title Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Job Title Search</h1>
+            <p>Enter a job title and view the word cloud of requirements!</p>
+        </div>
+        
+        <!-- Search Form -->
+        <form method="POST" action="/search" class="search-form">
+            <input type="text" name="query" placeholder="Enter job title" value="{{ query or '' }}" required class="search-input">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+
+        {% if wordcloud_image_path %}
+            <div class="wordcloud-container">
+                <h2>Word Cloud for: "{{ query }}"</h2>
+                <img src="{{ url_for('serve_image', filename='wordcloud.png') }}" alt="Word Cloud" class="wordcloud-image">
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

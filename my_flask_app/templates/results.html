@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Radial Stacked Bar Chart — Jobs by Level</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="{{ url_for('static', filename='result.js') }}"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .filters {
+      margin-bottom: 20px;
+    }
+    .filters button {
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .filter-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+      transform: translateX(-250px);
+      transition: transform 0.3s ease;
+      padding: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    .filter-drawer.open {
+      transform: translateX(0);
+    }
+    .drawer-content {
+      margin-bottom: 20px;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .legend-item {
+      margin: 0 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      margin-right: 5px;
+      border-radius: 2px;
+    }
+    svg {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Job Distribution by Level (Radial Chart)</h1>
+
+<div class="filters">
+  <button id="toggle-filters">Show Filters</button>
+  <button id="clear-filters">Clear Filters</button>
+</div>
+
+<div class="filter-drawer" id="filter-drawer">
+  <div class="drawer-content">
+    <label for="date-filter">Date:</label>
+    <input type="date" id="date-filter" />
+  </div>
+
+  <div class="drawer-content">
+    <label for="keyword-filter">Search keyword:</label>
+    <input type="text" id="keyword-filter" placeholder="Search keyword..." />
+  </div>
+
+  <div class="drawer-content">
+    <label for="min-count-filter">Min jobs per location:</label>
+    <input type="number" id="min-count-filter" placeholder="Min jobs per location" min="1" />
+  </div>
+
+  <div class="drawer-content" id="location-checkboxes" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-color" style="background:#66c2a5;"></div> Junior</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fc8d62;"></div> Middle</div>
+  <div class="legend-item"><div class="legend-color" style="background:#8da0cb;"></div> Senior</div>
+</div>
+
+<svg width="800" height="800"></svg>
+
+<script>
+  const levelColors = {
+    'junior': '#66c2a5',
+    'middle': '#fc8d62',
+    'senior': '#8da0cb'
+  };
+
+  const svg = d3.select("svg");
+  const width = +svg.attr("width");
+  const height = +svg.attr("height");
+  const innerRadius = 100;
+  const outerRadius = Math.min(width, height) / 2 - 50;
+  const g = svg.append("g").attr("transform", `translate(${width/2},${height/2})`);
+
+  let selectedLocations = [];
+  let allLocations = [];
+
+  function classifyLevel(title) {
+    title = title.toLowerCase();
+    if (title.includes("junior")) return "junior";
+    if (title.includes("senior")) return "senior";
+    return "middle";
+  }
+
+  function abbreviate(text) {
+    return text.length > 10 ? text.slice(0, 10) + '…' : text;
+  }
+
+// Draw the radial stacked bar chart
+function draw(data) {
+  // Clear any previous elements
+  g.selectAll("*").remove();
+
+  // Filter the data to only include selected locations
+  const filteredData = data.filter(d => selectedLocations.length === 0 || selectedLocations.includes(d.Location));
+
+  // Group data by location and level
+  const grouped = d3.rollup(
+    filteredData,
+    v => d3.rollup(v, vv => vv.length, d => d.level),
+    d => d.Location
+  );
+
+  // Recalculate the locations after filtering
+  const locations = Array.from(grouped.keys()).sort();
+
+  // Recalculate the angle scale based on the filtered locations
+  const angleScale = d3.scaleBand()
+    .domain(locations)
+    .range([0, 2 * Math.PI])
+    .padding(0.1);
+
+  // Recalculate the max total (the total number of jobs for the selected locations)
+  const maxTotal = d3.max(locations, loc => {
+    return d3.sum(Array.from(grouped.get(loc)?.values() || []));
+  });
+
+  // Recalculate the radius scale
+  const radiusScale = d3.scaleLinear()
+    .domain([0, maxTotal])
+    .range([innerRadius, outerRadius]);
+
+  // Redraw the bars for the filtered data
+  for (const loc of locations) {
+    if (selectedLocations.length === 0 || selectedLocations.includes(loc)) {
+      const levels = grouped.get(loc) || new Map();
+      let start = innerRadius;
+
+      // Draw bars for each job level (junior, middle, senior)
+      for (const level of ["junior", "middle", "senior"]) {
+        const count = levels.get(level) || 0;
+        const end = radiusScale(count + radiusScale.invert(start));
+
+        const arc = d3.arc()
+          .innerRadius(start)
+          .outerRadius(end)
+          .startAngle(angleScale(loc))
+          .endAngle(angleScale(loc) + angleScale.bandwidth());
+
+        g.append("path")
+          .attr("d", arc)
+          .attr("fill", levelColors[level]);
+
+        start = end;
+      }
+
+      // Label for the location
+      const angle = angleScale(loc) + angleScale.bandwidth() / 2;
+      const labelRadius = outerRadius + 20;
+      g.append("text")
+        .attr("transform", `rotate(${(angle * 180 / Math.PI - 90)}) translate(${labelRadius},0) rotate(${angle > Math.PI ? 180 : 0})`)
+        .attr("text-anchor", angle > Math.PI ? "end" : "start")
+        .attr("alignment-baseline", "middle")
+        .attr("font-size", "10px")
+        .text(abbreviate(loc));
+    }
+  }
+}
+
+
+
+  function fetchData(filters = {}) {
+  const params = new URLSearchParams(filters);
+  fetch('jobs/api/jobs?' + params.toString())
+    .then(res => res.json())
+    .then(data => {
+      draw(data.jobs); // Use the jobs data for drawing the chart
+      populateLocations(data.locations); // Populate locations using the static locations from the response
+    });
+}
+
+    function populateLocations(locations) {
+    const locationContainer = document.getElementById('location-checkboxes');
+    
+    // Ensure locations are valid and not undefined
+    locations = locations.filter(loc => loc && loc !== 'undefined');
+    
+    locationContainer.innerHTML = '';
+    locations.forEach(loc => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = loc;
+        checkbox.checked = selectedLocations.includes(loc);
+        checkbox.name = 'location';
+        checkbox.id = `loc-${loc}`;
+
+        const label = document.createElement('label');
+        label.htmlFor = `loc-${loc}`;
+        label.innerText = loc;
+        label.style.marginRight = '15px';
+
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+
+        locationContainer.appendChild(wrapper);
+    });
+
+    // Add event listener to update the filter when a checkbox is clicked
+    document.querySelectorAll('input[name="location"]').forEach(cb => {
+        cb.addEventListener('change', handleFilterChange);
+    });
+    }
+
+  function getFilters() {
+    const date = document.getElementById("date-filter").value;
+    const keyword = document.getElementById("keyword-filter").value;
+    const minCount = document.getElementById("min-count-filter").value;
+
+    selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
+
+    return {
+      date,
+      keyword,
+      minCount,
+      locations: selectedLocations.join(',')
+    };
+  }
+
+  function handleFilterChange() {
+    const filters = getFilters();
+    fetchData(filters);
+  }
+
+  // Event listeners for immediate update
+  document.getElementById("date-filter").addEventListener("input", handleFilterChange);
+  document.getElementById("keyword-filter").addEventListener("input", handleFilterChange);
+  document.getElementById("min-count-filter").addEventListener("input", handleFilterChange);
+
+  document.getElementById("toggle-filters").addEventListener("click", () => {
+    document.getElementById("filter-drawer").classList.toggle("open");
+  });
+
+  document.getElementById("clear-filters").addEventListener("click", () => {
+    selectedLocations = [];
+    document.getElementById("date-filter").value = '';
+    document.getElementById("keyword-filter").value = '';
+    document.getElementById("min-count-filter").value = '';
+    fetchData();
+  });
+
+  // Initial fetch
+  fetchData();
+</script>
+
+</body>
+</html>
