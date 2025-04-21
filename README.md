@@ -1,17 +1,37 @@
-# JobHack
+# JobHack - Job Market Data Wrangling & Analysis
 
-JobHack is a project designed to help you understand the job market better by providing tools to scrape up-to-date data from popular websites such as Indeed, LinkedIn, Headhunter, and more.
+![GitHub](https://img.shields.io/github/license/Data-Wrangling-and-Visualisation/JobHack)  
+![GitHub last commit](https://img.shields.io/github/last-commit/Data-Wrangling-and-Visualisation/JobHack)  
+![GitHub repo size](https://img.shields.io/github/repo-size/Data-Wrangling-and-Visualisation/JobHack)
 
-## Features
+JobHack is a powerful toolkit for scraping, analyzing, and visualizing job market data from platforms like LinkedIn, Headhunter, and Indeed. Designed for job seekers, recruiters, and data enthusiasts.
 
-- **LinkedIn Scraper**: We have developed a scraper that extracts job listings from LinkedIn. Currently, only a small portion of the data is being scraped, as we are awaiting approval to be white-listed by LinkedIn.
-  
-- **Headhunter Data Extraction**: We have successfully extracted 2,000 job listings from Headhunter and conducted initial data analysis.
+## 🔥 Key Features
 
-- **Data Augmentation**: We are running Ollama with LLaMA 3.2 (1B) to extend our dataset by fetching job description links from LinkedIn using BeautifulSoup. This process will allow us to extract additional fields such as salary range, technical requirements, educational requirements, and more, enabling further analysis.
+### 🕷️ Web Scrapers
+- **LinkedIn Scraper** (Partial implementation - awaiting whitelist approval)
+- **Headhunter Integration** (2,000+ jobs collected)
+- **Coming Soon**: Indeed & Glassdoor support
 
-## Tools Used
-- **Ollama** with **LLaMA 3.2 (1B)**
-- **Scrapy** for crawling websites like linked in (indeed and glassdoor possibly in next weeks)
-- **BeautifulSoup** for web scraping the descriptions
-- **LinkedIn**, **Headhunter**, **Indeed**, and other job websites
+### 🧠 AI-Powered Augmentation
+- **LLaMA 3.2 (1B)** via Ollama
+- Extracts:
+  - Salary ranges
+  - Technical requirements
+  - Education levels
+  - Company details
+
+### 📊 Analysis Tools
+- Salary distribution visualizations
+- Skills demand heatmaps
+- Remote work trends analysis
+
+## 🛠️ Tech Stack
+
+```python
+# Core Technologies
+- Scrapy, BeautifulSoup  # Web scraping
+- Pandas, NumPy         # Data wrangling
+- Matplotlib, Plotly    # Visualization
+- Ollama (LLaMA 3.2)    # NLP augmentation
+- Jupyter Notebooks     # Analysis
