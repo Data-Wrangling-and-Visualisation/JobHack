@@ -14,7 +14,7 @@ JobHack is a powerful toolkit for scraping, analyzing, and visualizing job marke
 - **Coming Soon**: Indeed & Glassdoor support
 
 ### 🧠 AI-Powered Augmentation
-- **LLaMA 3.2 (1B)** via Ollama
+- **LLaMA 3.2 (1B)** via Ollama (for future...)
 - Extracts:
   - Salary ranges
   - Technical requirements
@@ -35,3 +35,12 @@ JobHack is a powerful toolkit for scraping, analyzing, and visualizing job marke
 - Matplotlib, Plotly    # Visualization
 - Ollama (LLaMA 3.2)    # NLP augmentation
 - Jupyter Notebooks     # Analysis
+
+# 🚀 Quick Start
+
+### Clone the repo:
+
+```bash
+git clone https://github.com/Data-Wrangling-and-Visualisation/JobHack.git
+cd JobHack
+
