@@ -52,6 +52,10 @@ python app.py
 ```
 Then you can open your browser and check different visuals
 
+![Alt text](1.png)
+![Alt text](2.png)
+![Alt text](3.png)
+
 
 ![Alt text](/1.jpg)
 
